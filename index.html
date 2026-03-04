@@ -297,6 +297,12 @@ body { font-family: 'Nunito', sans-serif; background: var(--bg); min-height: 100
     <div class="app-logo" id="secret-tap">
       <span class="logo-star">⭐</span> HamzaTV
     </div>
+    <button onclick="openDriveApp()" style="background:rgba(255,107,53,0.12);border:2px solid rgba(255,107,53,0.3);color:var(--orange);border-radius:50px;padding:7px 14px;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.78rem;cursor:pointer;display:flex;align-items:center;gap:5px;">
+      📥 Offline
+    </button>
+  </div>
+  <div id="home-banner-wrap" style="display:none;padding:0 14px 12px;">
+    <img id="home-banner" src="" alt="" style="width:100%;border-radius:20px;max-height:160px;object-fit:cover;box-shadow:0 6px 20px rgba(0,0,0,0.13);">
   </div>
   <div class="cat-scroll" id="cat-tabs"></div>
   <div id="video-grid" class="video-grid"></div>
@@ -355,6 +361,17 @@ body { font-family: 'Nunito', sans-serif; background: var(--bg); min-height: 100
   </div>
   <div class="panel-subtitle">Video ve kategori yönetimi</div>
 
+  <!-- Banner -->
+  <div class="panel-section">
+    <div class="panel-section-title">🖼️ Ana Sayfa Bannerı</div>
+    <label class="input-label">Drive Resim Linki</label>
+    <input type="text" class="text-input" id="input-banner" placeholder="drive.google.com/file/d/...">
+    <div style="display:flex;gap:8px;">
+      <button class="add-btn" style="flex:1" onclick="saveBanner()">✅ Bannerı Kaydet</button>
+      <button class="small-btn" onclick="removeBanner()">Kaldır</button>
+    </div>
+  </div>
+
   <!-- Kategoriler -->
   <div class="panel-section">
     <div class="panel-section-title">🗂️ Kategoriler</div>
@@ -407,6 +424,26 @@ body { font-family: 'Nunito', sans-serif; background: var(--bg); min-height: 100
   <button class="close-panel-btn" onclick="closePanel()">← Çocuk Ekranına Dön</button>
 </div>
 
+<!-- Offline Modal -->
+<div id="offline-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:500;align-items:center;justify-content:center;padding:24px;">
+  <div style="background:#1a1a2e;border-radius:24px;padding:28px 22px;max-width:340px;width:100%;text-align:center;">
+    <div style="font-size:3.5rem;margin-bottom:12px;">📥</div>
+    <div style="font-family:'Fredoka One',cursive;color:white;font-size:1.4rem;margin-bottom:8px;">Offline İzleme</div>
+    <div style="color:rgba(255,255,255,0.55);font-size:0.85rem;font-weight:600;line-height:1.6;margin-bottom:22px;">
+      İnternet olmadan izlemek için videoları Drive uygulamasına önceden indirmen gerekiyor.<br><br>
+      Aşağıdaki butona bas, Drive uygulaması açılacak. Orada videoları bul ve
+      <strong style="color:#FFD93D;">⋮ → Çevrimdışı kullanılabilir yap</strong> seç.
+    </div>
+    <a id="drive-app-link" href="https://drive.google.com" target="_blank"
+      style="display:block;background:linear-gradient(135deg,#FF6B35,#FF4757);color:white;border-radius:14px;padding:14px;font-family:'Fredoka One',cursive;font-size:1rem;text-decoration:none;margin-bottom:10px;box-shadow:0 4px 14px rgba(255,107,53,0.35);">
+      📂 Drive Uygulamasını Aç
+    </a>
+    <button onclick="closeOfflineModal()" style="background:rgba(255,255,255,0.07);border:2px solid rgba(255,255,255,0.13);color:rgba(255,255,255,0.6);border-radius:14px;padding:12px;font-family:'Fredoka One',cursive;font-size:0.9rem;cursor:pointer;width:100%;">
+      Kapat
+    </button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -416,6 +453,7 @@ let state = {
   videos: [],
   categories: ['Çizgi Film', 'Masal', 'Eğitim'],
   pin: DEFAULT_PIN,
+  bannerId: '',
   activeCategory: 'Tümü',
   pinMode: 'verify',
   pinBuffer: '',
@@ -430,6 +468,7 @@ function save() {
     localStorage.setItem('hamzatv_v', JSON.stringify(state.videos));
     localStorage.setItem('hamzatv_c', JSON.stringify(state.categories));
     localStorage.setItem('hamzatv_p', state.pin);
+    localStorage.setItem('hamzatv_b', state.bannerId || '');
   } catch(e) {}
 }
 
@@ -438,9 +477,11 @@ function load() {
     const v = localStorage.getItem('hamzatv_v');
     const c = localStorage.getItem('hamzatv_c');
     const p = localStorage.getItem('hamzatv_p');
+    const b = localStorage.getItem('hamzatv_b');
     if (v) state.videos = JSON.parse(v);
     if (c) state.categories = JSON.parse(c);
     if (p) state.pin = p;
+    if (b) state.bannerId = b;
   } catch(e) {}
 }
 
@@ -701,6 +742,7 @@ function renderPanel() {
       <div class="list-info">
         <div class="list-title">${escHtml(v.title)}</div>
         <div class="list-meta">${v.category || 'Kategorisiz'} · Drive</div>
+        <a href="https://drive.google.com/file/d/${v.id}/view" target="_blank" style="display:inline-block;margin-top:5px;background:rgba(72,201,248,0.18);color:#48C9F8;border-radius:8px;padding:3px 10px;font-size:0.7rem;font-weight:800;text-decoration:none;">↓ Drive'da Aç</a>
       </div>
       <button class="delete-btn" onclick="deleteVideo(${i})">🗑️</button>`;
     list.appendChild(item);
@@ -748,6 +790,48 @@ function changePin() {
 
 function closePanel() { showScreen('home'); }
 
+function saveBanner() {
+  const val = document.getElementById('input-banner').value.trim();
+  const id = extractDriveId(val);
+  if (!id) { showToast('❌ Geçersiz Drive linki'); return; }
+  state.bannerId = id;
+  save(); renderBanner();
+  document.getElementById('input-banner').value = '';
+  showToast('✅ Banner kaydedildi!');
+}
+
+function removeBanner() {
+  state.bannerId = '';
+  save(); renderBanner();
+  showToast('🗑️ Banner kaldırıldı');
+}
+
+function renderBanner() {
+  const wrap = document.getElementById('home-banner-wrap');
+  const img  = document.getElementById('home-banner');
+  if (state.bannerId) {
+    img.src = driveThumb(state.bannerId);
+    wrap.style.display = 'block';
+  } else {
+    wrap.style.display = 'none';
+  }
+}
+
+function openDriveApp() {
+  const modal = document.getElementById('offline-modal');
+  modal.style.display = 'flex';
+  // Try to open Drive app on Android via intent, fallback to web
+  const link = document.getElementById('drive-app-link');
+  const isMobile = /Android/i.test(navigator.userAgent);
+  link.href = isMobile
+    ? 'https://drive.google.com/drive/my-drive'
+    : 'https://drive.google.com';
+}
+
+function closeOfflineModal() {
+  document.getElementById('offline-modal').style.display = 'none';
+}
+
 // ══ SCREEN MANAGER ══
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -780,6 +864,7 @@ history.pushState(null,'','');
 
 // ══ INIT ══
 load();
+renderBanner();
 renderCatTabs();
 renderHome();
 </script>
