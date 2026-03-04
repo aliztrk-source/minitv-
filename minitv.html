@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MiniTV 🌟">
+<meta name="theme-color" content="#FF6B35">
+<title>MiniTV 🌟</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sun: #FFD93D;
+    --orange: #FF6B35;
+    --coral: #FF4757;
+    --sky: #48C9F8;
+    --mint: #2ECC71;
+    --purple: #A29BFE;
+    --bg: #FFF8F0;
+    --card-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    --radius: 24px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    overflow-x: hidden;
+    user-select: none;
+  }
+
+  /* ─── SCREENS ─── */
+  .screen { display: none; min-height: 100vh; flex-direction: column; }
+  .screen.active { display: flex; }
+
+  /* ─── HOME SCREEN ─── */
+  #home {
+    background: linear-gradient(160deg, #FFF8F0 0%, #FFF0E8 100%);
+    padding-bottom: 20px;
+  }
+
+  .home-header {
+    padding: 20px 20px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .app-logo {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2rem;
+    color: var(--orange);
+    letter-spacing: 1px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .logo-star {
+    display: inline-block;
+    animation: spin 4s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .greeting {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #aaa;
+    text-align: right;
+  }
+
+  /* Decorative bubbles */
+  .bubbles {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+  }
+
+  .bubble {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.08;
+  }
+
+  .bubble-1 { width: 200px; height: 200px; background: var(--sky); top: -60px; right: -40px; }
+  .bubble-2 { width: 150px; height: 150px; background: var(--sun); bottom: 80px; left: -50px; }
+  .bubble-3 { width: 100px; height: 100px; background: var(--mint); top: 40%; right: -20px; }
+
+  /* Video grid */
+  .section-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.2rem;
+    color: var(--orange);
+    padding: 16px 20px 8px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .video-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    padding: 4px 16px 16px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .video-card {
+    background: #fff;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    cursor: pointer;
+    transform: scale(1);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    -webkit-transform: scale(1);
+    border: 3px solid transparent;
+    animation: popIn 0.4s ease both;
+  }
+
+  @keyframes popIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .video-card:active {
+    transform: scale(0.94);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .card-colors {
+    --c0: #FFD93D; --c1: #FF6B35; --c2: #48C9F8;
+    --c3: #2ECC71; --c4: #A29BFE; --c5: #FF4757;
+    --c6: #FDCB6E; --c7: #6C5CE7;
+  }
+
+  .video-card:nth-child(8n+1) { border-color: #FFD93D; }
+  .video-card:nth-child(8n+2) { border-color: #48C9F8; }
+  .video-card:nth-child(8n+3) { border-color: #2ECC71; }
+  .video-card:nth-child(8n+4) { border-color: #A29BFE; }
+  .video-card:nth-child(8n+5) { border-color: #FF6B35; }
+  .video-card:nth-child(8n+6) { border-color: #FF4757; }
+  .video-card:nth-child(8n+7) { border-color: #FDCB6E; }
+  .video-card:nth-child(8n+8) { border-color: #6C5CE7; }
+
+  .card-thumb {
+    width: 100%;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+    display: block;
+    background: #f0f0f0;
+  }
+
+  .card-thumb-placeholder {
+    width: 100%;
+    aspect-ratio: 16/9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+  }
+
+  .card-info {
+    padding: 10px 12px 12px;
+  }
+
+  .card-title {
+    font-weight: 800;
+    font-size: 0.82rem;
+    color: #333;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .play-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 8px;
+  }
+
+  .play-btn {
+    background: var(--orange);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 4px 14px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 0.75rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* Empty state */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 30px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .empty-emoji {
+    font-size: 5rem;
+    margin-bottom: 16px;
+    animation: bounce 2s ease infinite;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+
+  .empty-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.4rem;
+    color: var(--orange);
+    margin-bottom: 8px;
+  }
+
+  .empty-subtitle {
+    font-size: 0.9rem;
+    color: #aaa;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  /* ─── PLAYER SCREEN ─── */
+  #player {
+    background: #000;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 100;
+    align-items: stretch;
+    justify-content: center;
+  }
+
+  #player.active { display: flex; }
+
+  .player-header {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    z-index: 10;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 100%);
+  }
+
+  .back-btn {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    border-radius: 50%;
+    width: 44px; height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    color: white;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+
+  .back-btn:active { background: rgba(255,255,255,0.4); }
+
+  .player-title {
+    font-family: 'Fredoka One', cursive;
+    color: white;
+    font-size: 1rem;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  #youtube-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  /* ─── PARENT PANEL ─── */
+  #parent-panel {
+    background: linear-gradient(160deg, #1a1a2e 0%, #16213e 100%);
+    padding: 0;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 200;
+    overflow-y: auto;
+  }
+
+  .panel-header {
+    padding: 50px 24px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .panel-title {
+    font-family: 'Fredoka One', cursive;
+    color: white;
+    font-size: 1.6rem;
+  }
+
+  .panel-subtitle {
+    color: rgba(255,255,255,0.5);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0 24px 20px;
+  }
+
+  .panel-section {
+    margin: 0 16px 20px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 20px;
+    padding: 20px;
+  }
+
+  .panel-section-title {
+    color: var(--sun);
+    font-weight: 800;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 16px;
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .input-label {
+    color: rgba(255,255,255,0.7);
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .text-input {
+    background: rgba(255,255,255,0.1);
+    border: 2px solid rgba(255,255,255,0.15);
+    border-radius: 14px;
+    padding: 12px 16px;
+    color: white;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+
+  .text-input:focus { border-color: var(--sky); }
+  .text-input::placeholder { color: rgba(255,255,255,0.3); }
+
+  .add-btn {
+    background: linear-gradient(135deg, var(--orange), var(--coral));
+    color: white;
+    border: none;
+    border-radius: 14px;
+    padding: 14px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    cursor: pointer;
+    width: 100%;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 16px rgba(255,107,53,0.4);
+    transition: transform 0.1s, box-shadow 0.1s;
+  }
+
+  .add-btn:active { transform: scale(0.97); box-shadow: 0 2px 8px rgba(255,107,53,0.3); }
+
+  .video-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .video-list-item {
+    background: rgba(255,255,255,0.07);
+    border-radius: 14px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .list-thumb {
+    width: 56px;
+    height: 42px;
+    border-radius: 8px;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: rgba(255,255,255,0.1);
+  }
+
+  .list-thumb-placeholder {
+    width: 56px;
+    height: 42px;
+    border-radius: 8px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    background: rgba(255,255,255,0.1);
+  }
+
+  .list-info { flex: 1; min-width: 0; }
+
+  .list-title {
+    color: white;
+    font-weight: 700;
+    font-size: 0.85rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .list-id {
+    color: rgba(255,255,255,0.4);
+    font-size: 0.7rem;
+    margin-top: 2px;
+  }
+
+  .delete-btn {
+    background: rgba(255,71,87,0.2);
+    border: none;
+    border-radius: 10px;
+    width: 36px; height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--coral);
+    font-size: 1rem;
+    flex-shrink: 0;
+    transition: background 0.2s;
+  }
+
+  .delete-btn:active { background: rgba(255,71,87,0.4); }
+
+  .close-panel-btn {
+    margin: 4px 16px 30px;
+    background: rgba(255,255,255,0.08);
+    border: 2px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.7);
+    border-radius: 14px;
+    padding: 14px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    cursor: pointer;
+    width: calc(100% - 32px);
+    letter-spacing: 0.5px;
+  }
+
+  .empty-list {
+    text-align: center;
+    color: rgba(255,255,255,0.3);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 20px 0;
+  }
+
+  /* ─── PIN SCREEN ─── */
+  #pin-screen {
+    background: linear-gradient(160deg, #1a1a2e 0%, #16213e 100%);
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 300;
+  }
+
+  .pin-box {
+    width: 100%;
+    max-width: 320px;
+    padding: 30px 24px;
+    text-align: center;
+  }
+
+  .pin-emoji {
+    font-size: 3.5rem;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .pin-title {
+    font-family: 'Fredoka One', cursive;
+    color: white;
+    font-size: 1.5rem;
+    margin-bottom: 6px;
+  }
+
+  .pin-subtitle {
+    color: rgba(255,255,255,0.5);
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 28px;
+  }
+
+  .pin-dots {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+
+  .pin-dot {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    border: 2.5px solid rgba(255,255,255,0.3);
+    background: transparent;
+    transition: all 0.15s;
+  }
+
+  .pin-dot.filled { background: var(--sun); border-color: var(--sun); }
+
+  .pin-keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .pin-key {
+    background: rgba(255,255,255,0.08);
+    border: none;
+    border-radius: 50%;
+    width: 70px; height: 70px;
+    margin: 0 auto;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.5rem;
+    color: white;
+    cursor: pointer;
+    transition: background 0.1s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pin-key:active { background: rgba(255,255,255,0.2); transform: scale(0.92); }
+  .pin-key.zero { grid-column: 2; }
+  .pin-key.del { background: rgba(255,71,87,0.15); color: var(--coral); }
+
+  .pin-error {
+    color: var(--coral);
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-top: 16px;
+    min-height: 20px;
+    animation: shake 0.3s ease;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
+  }
+
+  /* ─── TOAST ─── */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: #333;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    z-index: 999;
+    transition: transform 0.3s ease;
+    white-space: nowrap;
+  }
+
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ─── CHANGE PIN SECTION ─── */
+  .change-pin-row {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+  }
+
+  .change-pin-row .text-input {
+    flex: 1;
+    letter-spacing: 6px;
+    font-size: 1.1rem;
+  }
+
+  .small-btn {
+    background: rgba(255,255,255,0.1);
+    border: 2px solid rgba(255,255,255,0.2);
+    color: white;
+    border-radius: 14px;
+    padding: 12px 16px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 0.8rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s;
+  }
+
+  .small-btn:active { background: rgba(255,255,255,0.2); }
+
+  /* Scrollbar hidden */
+  ::-webkit-scrollbar { display: none; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════ HOME SCREEN ═══════════════════════════════ -->
+<div id="home" class="screen active">
+  <div class="bubbles">
+    <div class="bubble bubble-1"></div>
+    <div class="bubble bubble-2"></div>
+    <div class="bubble bubble-3"></div>
+  </div>
+
+  <div class="home-header">
+    <div class="app-logo" id="secret-tap">
+      <span class="logo-star">⭐</span> MiniTV
+    </div>
+    <div class="greeting">Bugün ne izleyelim?</div>
+  </div>
+
+  <div class="section-title">🎬 Videolar</div>
+
+  <div id="video-grid" class="video-grid"></div>
+</div>
+
+<!-- ═══════════════════════════════ PLAYER SCREEN ═══════════════════════════════ -->
+<div id="player" class="screen">
+  <div class="player-header">
+    <button class="back-btn" onclick="closePlayer()">←</button>
+    <div class="player-title" id="player-title"></div>
+  </div>
+  <iframe
+    id="youtube-frame"
+    allow="autoplay; fullscreen"
+    allowfullscreen
+    frameborder="0">
+  </iframe>
+</div>
+
+<!-- ═══════════════════════════════ PIN SCREEN ═══════════════════════════════ -->
+<div id="pin-screen" class="screen">
+  <div class="pin-box">
+    <span class="pin-emoji">🔐</span>
+    <div class="pin-title" id="pin-title">Ebeveyn Girişi</div>
+    <div class="pin-subtitle" id="pin-subtitle">4 haneli PIN kodunu gir</div>
+
+    <div class="pin-dots">
+      <div class="pin-dot" id="dot-0"></div>
+      <div class="pin-dot" id="dot-1"></div>
+      <div class="pin-dot" id="dot-2"></div>
+      <div class="pin-dot" id="dot-3"></div>
+    </div>
+
+    <div class="pin-keypad">
+      <button class="pin-key" onclick="pinKey('1')">1</button>
+      <button class="pin-key" onclick="pinKey('2')">2</button>
+      <button class="pin-key" onclick="pinKey('3')">3</button>
+      <button class="pin-key" onclick="pinKey('4')">4</button>
+      <button class="pin-key" onclick="pinKey('5')">5</button>
+      <button class="pin-key" onclick="pinKey('6')">6</button>
+      <button class="pin-key" onclick="pinKey('7')">7</button>
+      <button class="pin-key" onclick="pinKey('8')">8</button>
+      <button class="pin-key" onclick="pinKey('9')">9</button>
+      <button class="pin-key zero" onclick="pinKey('0')">0</button>
+      <button class="pin-key del" onclick="pinDel()">⌫</button>
+    </div>
+
+    <div class="pin-error" id="pin-error"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ PARENT PANEL ═══════════════════════════════ -->
+<div id="parent-panel" class="screen">
+  <div class="panel-header">
+    <span style="font-size:1.6rem">🎛️</span>
+    <div class="panel-title">Ebeveyn Paneli</div>
+  </div>
+  <div class="panel-subtitle">Video ekle, sil veya PIN değiştir</div>
+
+  <!-- Add Video -->
+  <div class="panel-section">
+    <div class="panel-section-title">➕ Video Ekle</div>
+    <div class="input-group">
+      <div class="input-label">YouTube Linki veya Video ID</div>
+      <input type="text" class="text-input" id="input-url"
+        placeholder="youtube.com/watch?v=... veya video kodu">
+    </div>
+    <div class="input-group">
+      <div class="input-label">Video Başlığı</div>
+      <input type="text" class="text-input" id="input-title"
+        placeholder="ör: Peppa Pig - Çamur Banyosu">
+    </div>
+    <div class="input-group">
+      <div class="input-label">Emoji (isteğe bağlı)</div>
+      <input type="text" class="text-input" id="input-emoji"
+        placeholder="ör: 🐷 🦕 🚗" maxlength="4">
+    </div>
+    <button class="add-btn" onclick="addVideo()">✅ Videoyu Ekle</button>
+  </div>
+
+  <!-- Video List -->
+  <div class="panel-section">
+    <div class="panel-section-title">📋 Mevcut Videolar</div>
+    <div id="video-list" class="video-list"></div>
+  </div>
+
+  <!-- Change PIN -->
+  <div class="panel-section">
+    <div class="panel-section-title">🔑 PIN Değiştir</div>
+    <div class="change-pin-row">
+      <input type="password" class="text-input" id="new-pin"
+        placeholder="Yeni 4 haneli PIN" maxlength="4" inputmode="numeric">
+      <button class="small-btn" onclick="changePin()">Kaydet</button>
+    </div>
+  </div>
+
+  <button class="close-panel-btn" onclick="closePanel()">← Çocuk Ekranına Dön</button>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════ STATE ═══════════════════════
+const DEFAULT_PIN = '1234';
+let state = {
+  videos: [],
+  pin: DEFAULT_PIN,
+  pinMode: 'verify', // 'verify' | 'setup'
+  pinBuffer: '',
+  secretTapCount: 0,
+  secretTapTimer: null
+};
+
+// ═══════════════════════ STORAGE ═══════════════════════
+function save() {
+  try {
+    localStorage.setItem('minitv_videos', JSON.stringify(state.videos));
+    localStorage.setItem('minitv_pin', state.pin);
+  } catch(e) {}
+}
+
+function load() {
+  try {
+    const v = localStorage.getItem('minitv_videos');
+    const p = localStorage.getItem('minitv_pin');
+    if (v) state.videos = JSON.parse(v);
+    if (p) state.pin = p;
+  } catch(e) {}
+}
+
+// ═══════════════════════ YOUTUBE UTILS ═══════════════════════
+function extractYouTubeId(input) {
+  input = input.trim();
+  // Plain ID (11 chars)
+  if (/^[a-zA-Z0-9_-]{11}$/.test(input)) return input;
+  // youtu.be/ID
+  let m = input.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
+  if (m) return m[1];
+  // watch?v=ID
+  m = input.match(/[?&]v=([a-zA-Z0-9_-]{11})/);
+  if (m) return m[1];
+  // /embed/ID
+  m = input.match(/embed\/([a-zA-Z0-9_-]{11})/);
+  if (m) return m[1];
+  // /shorts/ID
+  m = input.match(/shorts\/([a-zA-Z0-9_-]{11})/);
+  if (m) return m[1];
+  return null;
+}
+
+function thumbUrl(id) {
+  return `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
+}
+
+function embedUrl(id) {
+  return `https://www.youtube.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&iv_load_policy=3&disablekb=0&fs=1&playsinline=1`;
+}
+
+// ═══════════════════════ HOME SCREEN ═══════════════════════
+function renderHome() {
+  const grid = document.getElementById('video-grid');
+  grid.innerHTML = '';
+
+  if (state.videos.length === 0) {
+    grid.style.display = 'none';
+    const existing = document.getElementById('empty-state');
+    if (!existing) {
+      const empty = document.createElement('div');
+      empty.className = 'empty-state';
+      empty.id = 'empty-state';
+      empty.innerHTML = `
+        <div class="empty-emoji">🎭</div>
+        <div class="empty-title">Henüz video yok!</div>
+        <div class="empty-subtitle">⭐ logosuna 5 kez dokun<br>ve video ekle</div>
+      `;
+      document.getElementById('home').appendChild(empty);
+    }
+    return;
+  }
+
+  grid.style.display = 'grid';
+  const existing = document.getElementById('empty-state');
+  if (existing) existing.remove();
+
+  state.videos.forEach((v, i) => {
+    const card = document.createElement('div');
+    card.className = 'video-card';
+    card.style.animationDelay = `${i * 0.07}s`;
+    card.onclick = () => openPlayer(v);
+
+    const thumbHtml = v.emoji
+      ? `<div class="card-thumb-placeholder" style="background:${cardColor(i)}">${v.emoji}</div>`
+      : `<img class="card-thumb" src="${thumbUrl(v.id)}" onerror="this.parentNode.innerHTML='<div class=\\"card-thumb-placeholder\\" style=\\"background:${cardColor(i)}\\">${v.emoji || '🎬'}</div>'" loading="lazy">`;
+
+    card.innerHTML = `
+      ${thumbHtml}
+      <div class="card-info">
+        <div class="card-title">${escHtml(v.title)}</div>
+        <div class="play-icon">
+          <button class="play-btn">▶ İzle</button>
+        </div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function cardColor(i) {
+  const colors = ['#FFD93D','#48C9F8','#2ECC71','#A29BFE','#FF6B35','#FF4757','#FDCB6E','#6C5CE7'];
+  return colors[i % colors.length] + '33';
+}
+
+// ═══════════════════════ PLAYER ═══════════════════════
+function openPlayer(video) {
+  document.getElementById('player-title').textContent = video.title;
+  document.getElementById('youtube-frame').src = embedUrl(video.id);
+  showScreen('player');
+  // Try fullscreen on Android
+  try {
+    const el = document.documentElement;
+    if (el.requestFullscreen) el.requestFullscreen();
+  } catch(e) {}
+}
+
+function closePlayer() {
+  document.getElementById('youtube-frame').src = '';
+  try { if (document.exitFullscreen) document.exitFullscreen(); } catch(e) {}
+  showScreen('home');
+}
+
+// ═══════════════════════ SECRET TAP ═══════════════════════
+document.getElementById('secret-tap').addEventListener('click', () => {
+  state.secretTapCount++;
+  clearTimeout(state.secretTapTimer);
+  if (state.secretTapCount >= 5) {
+    state.secretTapCount = 0;
+    openPinScreen('verify');
+  } else {
+    state.secretTapTimer = setTimeout(() => { state.secretTapCount = 0; }, 2000);
+  }
+});
+
+// ═══════════════════════ PIN ═══════════════════════
+function openPinScreen(mode) {
+  state.pinMode = mode;
+  state.pinBuffer = '';
+  updatePinDots();
+  document.getElementById('pin-error').textContent = '';
+  if (mode === 'setup') {
+    document.getElementById('pin-title').textContent = 'PIN Oluştur';
+    document.getElementById('pin-subtitle').textContent = 'İlk kullanım için PIN belirle';
+  } else {
+    document.getElementById('pin-title').textContent = 'Ebeveyn Girişi';
+    document.getElementById('pin-subtitle').textContent = '4 haneli PIN kodunu gir';
+  }
+  showScreen('pin-screen');
+}
+
+function pinKey(k) {
+  if (state.pinBuffer.length >= 4) return;
+  state.pinBuffer += k;
+  updatePinDots();
+  if (state.pinBuffer.length === 4) {
+    setTimeout(checkPin, 150);
+  }
+}
+
+function pinDel() {
+  state.pinBuffer = state.pinBuffer.slice(0, -1);
+  updatePinDots();
+  document.getElementById('pin-error').textContent = '';
+}
+
+function updatePinDots() {
+  for (let i = 0; i < 4; i++) {
+    const dot = document.getElementById(`dot-${i}`);
+    dot.classList.toggle('filled', i < state.pinBuffer.length);
+  }
+}
+
+function checkPin() {
+  if (state.pinMode === 'setup') {
+    state.pin = state.pinBuffer;
+    save();
+    showScreen('parent-panel');
+    renderPanel();
+    showToast('PIN kaydedildi! Hoş geldin 👋');
+  } else {
+    if (state.pinBuffer === state.pin) {
+      showScreen('parent-panel');
+      renderPanel();
+    } else {
+      document.getElementById('pin-error').textContent = '❌ Yanlış PIN, tekrar dene';
+      state.pinBuffer = '';
+      updatePinDots();
+    }
+  }
+}
+
+// ═══════════════════════ PARENT PANEL ═══════════════════════
+function renderPanel() {
+  const list = document.getElementById('video-list');
+  list.innerHTML = '';
+
+  if (state.videos.length === 0) {
+    list.innerHTML = '<div class="empty-list">Henüz video eklenmedi</div>';
+    return;
+  }
+
+  state.videos.forEach((v, i) => {
+    const item = document.createElement('div');
+    item.className = 'video-list-item';
+
+    const thumbHtml = v.emoji
+      ? `<div class="list-thumb-placeholder">${v.emoji}</div>`
+      : `<img class="list-thumb" src="${thumbUrl(v.id)}" onerror="this.style.display='none'">`;
+
+    item.innerHTML = `
+      ${thumbHtml}
+      <div class="list-info">
+        <div class="list-title">${escHtml(v.title)}</div>
+        <div class="list-id">${v.id}</div>
+      </div>
+      <button class="delete-btn" onclick="deleteVideo(${i})">🗑️</button>
+    `;
+    list.appendChild(item);
+  });
+}
+
+function addVideo() {
+  const urlInput = document.getElementById('input-url').value.trim();
+  const titleInput = document.getElementById('input-title').value.trim();
+  const emojiInput = document.getElementById('input-emoji').value.trim();
+
+  if (!urlInput) { showToast('⚠️ YouTube linki gerekli'); return; }
+  if (!titleInput) { showToast('⚠️ Video başlığı gerekli'); return; }
+
+  const id = extractYouTubeId(urlInput);
+  if (!id) { showToast('❌ Geçersiz YouTube linki'); return; }
+
+  if (state.videos.find(v => v.id === id)) {
+    showToast('⚠️ Bu video zaten ekli');
+    return;
+  }
+
+  state.videos.push({ id, title: titleInput, emoji: emojiInput || '' });
+  save();
+  renderPanel();
+  renderHome();
+
+  document.getElementById('input-url').value = '';
+  document.getElementById('input-title').value = '';
+  document.getElementById('input-emoji').value = '';
+  showToast('✅ Video eklendi!');
+}
+
+function deleteVideo(i) {
+  if (!confirm(`"${state.videos[i].title}" silinsin mi?`)) return;
+  state.videos.splice(i, 1);
+  save();
+  renderPanel();
+  renderHome();
+  showToast('🗑️ Video silindi');
+}
+
+function changePin() {
+  const newPin = document.getElementById('new-pin').value.trim();
+  if (!/^\d{4}$/.test(newPin)) {
+    showToast('⚠️ PIN 4 haneli sayı olmalı');
+    return;
+  }
+  state.pin = newPin;
+  save();
+  document.getElementById('new-pin').value = '';
+  showToast('🔑 PIN güncellendi!');
+}
+
+function closePanel() {
+  showScreen('home');
+}
+
+// ═══════════════════════ SCREEN MANAGER ═══════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ═══════════════════════ TOAST ═══════════════════════
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ═══════════════════════ UTILS ═══════════════════════
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ═══════════════════════ BACK BUTTON (Android) ═══════════════════════
+window.addEventListener('popstate', (e) => {
+  const active = document.querySelector('.screen.active');
+  if (active && active.id !== 'home') {
+    if (active.id === 'player') closePlayer();
+    else if (active.id === 'parent-panel') closePanel();
+    else if (active.id === 'pin-screen') showScreen('home');
+  } else {
+    history.pushState(null, '', '');
+  }
+});
+
+history.pushState(null, '', '');
+
+// ═══════════════════════ FIRST RUN CHECK ═══════════════════════
+function checkFirstRun() {
+  const savedPin = localStorage.getItem('minitv_pin');
+  if (!savedPin) {
+    // First run: show setup note via empty state, PIN is default 1234
+    state.pin = DEFAULT_PIN;
+  }
+}
+
+// ═══════════════════════ INIT ═══════════════════════
+load();
+checkFirstRun();
+renderHome();
+</script>
+</body>
+</html>
