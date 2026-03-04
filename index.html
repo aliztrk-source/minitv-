@@ -6,9 +6,9 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="MiniTV 🌟">
+<meta name="apple-mobile-web-app-title" content="HamzaTV 🌟">
 <meta name="theme-color" content="#FF6B35">
-<title>MiniTV 🌟</title>
+<title>HamzaTV 🌟</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -642,7 +642,7 @@
 
   <div class="home-header">
     <div class="app-logo" id="secret-tap">
-      <span class="logo-star">⭐</span> MiniTV
+      <span class="logo-star">⭐</span> HamzaTV
     </div>
     <div class="greeting">Bugün ne izleyelim?</div>
   </div>
@@ -712,7 +712,7 @@
     <div class="input-group">
       <div class="input-label">YouTube Linki veya Video ID</div>
       <input type="text" class="text-input" id="input-url"
-        placeholder="youtube.com/watch?v=... veya video kodu">
+        placeholder="YouTube linki, Drive linki veya video kodu">
     </div>
     <div class="input-group">
       <div class="input-label">Video Başlığı</div>
@@ -781,29 +781,42 @@ function load() {
 // ═══════════════════════ YOUTUBE UTILS ═══════════════════════
 function extractYouTubeId(input) {
   input = input.trim();
-  // Plain ID (11 chars)
   if (/^[a-zA-Z0-9_-]{11}$/.test(input)) return input;
-  // youtu.be/ID
   let m = input.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
   if (m) return m[1];
-  // watch?v=ID
   m = input.match(/[?&]v=([a-zA-Z0-9_-]{11})/);
   if (m) return m[1];
-  // /embed/ID
   m = input.match(/embed\/([a-zA-Z0-9_-]{11})/);
   if (m) return m[1];
-  // /shorts/ID
   m = input.match(/shorts\/([a-zA-Z0-9_-]{11})/);
   if (m) return m[1];
   return null;
+}
+
+function extractDriveId(input) {
+  input = input.trim();
+  // drive.google.com/file/d/ID/...
+  let m = input.match(/\/file\/d\/([a-zA-Z0-9_-]{10,})/);
+  if (m) return m[1];
+  // drive.google.com/open?id=ID
+  m = input.match(/[?&]id=([a-zA-Z0-9_-]{10,})/);
+  if (m) return m[1];
+  return null;
+}
+
+function isDriveUrl(input) {
+  return input.includes('drive.google.com') || input.includes('docs.google.com');
 }
 
 function thumbUrl(id) {
   return `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
 }
 
-function embedUrl(id) {
-  return `https://www.youtube.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&iv_load_policy=3&disablekb=0&fs=1&playsinline=1`;
+function embedUrl(video) {
+  if (video.type === 'drive') {
+    return `https://drive.google.com/file/d/${video.id}/preview`;
+  }
+  return `https://www.youtube.com/embed/${video.id}?autoplay=1&rel=0&modestbranding=1&iv_load_policy=3&disablekb=0&fs=1&playsinline=1`;
 }
 
 // ═══════════════════════ HOME SCREEN ═══════════════════════
@@ -838,9 +851,9 @@ function renderHome() {
     card.style.animationDelay = `${i * 0.07}s`;
     card.onclick = () => openPlayer(v);
 
-    const thumbHtml = v.emoji
-      ? `<div class="card-thumb-placeholder" style="background:${cardColor(i)}">${v.emoji}</div>`
-      : `<img class="card-thumb" src="${thumbUrl(v.id)}" onerror="this.parentNode.innerHTML='<div class=\\"card-thumb-placeholder\\" style=\\"background:${cardColor(i)}\\">${v.emoji || '🎬'}</div>'" loading="lazy">`;
+    const thumbHtml = (v.emoji || v.type === 'drive')
+      ? `<div class="card-thumb-placeholder" style="background:${cardColor(i)}">${v.emoji || '📁'}</div>`
+      : `<img class="card-thumb" src="${thumbUrl(v.id)}" onerror="this.parentNode.innerHTML='<div class=\\"card-thumb-placeholder\\" style=\\"background:${cardColor(i)}\\">🎬</div>'" loading="lazy">`;
 
     card.innerHTML = `
       ${thumbHtml}
@@ -863,9 +876,8 @@ function cardColor(i) {
 // ═══════════════════════ PLAYER ═══════════════════════
 function openPlayer(video) {
   document.getElementById('player-title').textContent = video.title;
-  document.getElementById('youtube-frame').src = embedUrl(video.id);
+  document.getElementById('youtube-frame').src = embedUrl(video);
   showScreen('player');
-  // Try fullscreen on Android
   try {
     const el = document.documentElement;
     if (el.requestFullscreen) el.requestFullscreen();
@@ -961,8 +973,8 @@ function renderPanel() {
     const item = document.createElement('div');
     item.className = 'video-list-item';
 
-    const thumbHtml = v.emoji
-      ? `<div class="list-thumb-placeholder">${v.emoji}</div>`
+    const thumbHtml = (v.emoji || v.type === 'drive')
+      ? `<div class="list-thumb-placeholder">${v.emoji || '📁'}</div>`
       : `<img class="list-thumb" src="${thumbUrl(v.id)}" onerror="this.style.display='none'">`;
 
     item.innerHTML = `
@@ -982,18 +994,27 @@ function addVideo() {
   const titleInput = document.getElementById('input-title').value.trim();
   const emojiInput = document.getElementById('input-emoji').value.trim();
 
-  if (!urlInput) { showToast('⚠️ YouTube linki gerekli'); return; }
+  if (!urlInput) { showToast('⚠️ Link gerekli'); return; }
   if (!titleInput) { showToast('⚠️ Video başlığı gerekli'); return; }
 
-  const id = extractYouTubeId(urlInput);
-  if (!id) { showToast('❌ Geçersiz YouTube linki'); return; }
+  let videoObj = null;
 
-  if (state.videos.find(v => v.id === id)) {
+  if (isDriveUrl(urlInput)) {
+    const driveId = extractDriveId(urlInput);
+    if (!driveId) { showToast('❌ Geçersiz Drive linki'); return; }
+    videoObj = { id: driveId, type: 'drive', title: titleInput, emoji: emojiInput || '📁' };
+  } else {
+    const ytId = extractYouTubeId(urlInput);
+    if (!ytId) { showToast('❌ Geçersiz YouTube linki'); return; }
+    videoObj = { id: ytId, type: 'youtube', title: titleInput, emoji: emojiInput || '' };
+  }
+
+  if (state.videos.find(v => v.id === videoObj.id)) {
     showToast('⚠️ Bu video zaten ekli');
     return;
   }
 
-  state.videos.push({ id, title: titleInput, emoji: emojiInput || '' });
+  state.videos.push(videoObj);
   save();
   renderPanel();
   renderHome();
