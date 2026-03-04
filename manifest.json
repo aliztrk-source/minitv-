@@ -1,0 +1,17 @@
+{
+  "name": "HamzaTV",
+  "short_name": "HamzaTV",
+  "description": "Hamza için özel video uygulaması",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFF8F0",
+  "theme_color": "#FF6B35",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Star/3D/star_3d.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
