@@ -6,680 +6,330 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="HamzaTV 🌟">
+<meta name="apple-mobile-web-app-title" content="HamzaTV">
 <meta name="theme-color" content="#FF6B35">
 <title>HamzaTV 🌟</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --sun: #FFD93D;
-    --orange: #FF6B35;
-    --coral: #FF4757;
-    --sky: #48C9F8;
-    --mint: #2ECC71;
-    --purple: #A29BFE;
-    --bg: #FFF8F0;
-    --card-shadow: 0 8px 24px rgba(0,0,0,0.12);
-    --radius: 24px;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
-  body {
-    font-family: 'Nunito', sans-serif;
-    background: var(--bg);
-    min-height: 100vh;
-    overflow-x: hidden;
-    user-select: none;
-  }
-
-  /* ─── SCREENS ─── */
-  .screen { display: none; min-height: 100vh; flex-direction: column; }
-  .screen.active { display: flex; }
-
-  /* ─── HOME SCREEN ─── */
-  #home {
-    background: linear-gradient(160deg, #FFF8F0 0%, #FFF0E8 100%);
-    padding-bottom: 20px;
-  }
-
-  .home-header {
-    padding: 20px 20px 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .app-logo {
-    font-family: 'Fredoka One', cursive;
-    font-size: 2rem;
-    color: var(--orange);
-    letter-spacing: 1px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .logo-star {
-    display: inline-block;
-    animation: spin 4s linear infinite;
-  }
-
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-
-  .greeting {
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: #aaa;
-    text-align: right;
-  }
-
-  /* Decorative bubbles */
-  .bubbles {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    pointer-events: none;
-    overflow: hidden;
-    z-index: 0;
-  }
-
-  .bubble {
-    position: absolute;
-    border-radius: 50%;
-    opacity: 0.08;
-  }
-
-  .bubble-1 { width: 200px; height: 200px; background: var(--sky); top: -60px; right: -40px; }
-  .bubble-2 { width: 150px; height: 150px; background: var(--sun); bottom: 80px; left: -50px; }
-  .bubble-3 { width: 100px; height: 100px; background: var(--mint); top: 40%; right: -20px; }
-
-  /* Video grid */
-  .section-title {
-    font-family: 'Fredoka One', cursive;
-    font-size: 1.2rem;
-    color: var(--orange);
-    padding: 16px 20px 8px;
-    position: relative;
-    z-index: 1;
-  }
-
-  .video-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-    padding: 4px 16px 16px;
-    position: relative;
-    z-index: 1;
-  }
-
-  .video-card {
-    background: #fff;
-    border-radius: var(--radius);
-    overflow: hidden;
-    box-shadow: var(--card-shadow);
-    cursor: pointer;
-    transform: scale(1);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-    -webkit-transform: scale(1);
-    border: 3px solid transparent;
-    animation: popIn 0.4s ease both;
-  }
-
-  @keyframes popIn {
-    0% { transform: scale(0.8); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
-  }
-
-  .video-card:active {
-    transform: scale(0.94);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  }
-
-  .card-colors {
-    --c0: #FFD93D; --c1: #FF6B35; --c2: #48C9F8;
-    --c3: #2ECC71; --c4: #A29BFE; --c5: #FF4757;
-    --c6: #FDCB6E; --c7: #6C5CE7;
-  }
-
-  .video-card:nth-child(8n+1) { border-color: #FFD93D; }
-  .video-card:nth-child(8n+2) { border-color: #48C9F8; }
-  .video-card:nth-child(8n+3) { border-color: #2ECC71; }
-  .video-card:nth-child(8n+4) { border-color: #A29BFE; }
-  .video-card:nth-child(8n+5) { border-color: #FF6B35; }
-  .video-card:nth-child(8n+6) { border-color: #FF4757; }
-  .video-card:nth-child(8n+7) { border-color: #FDCB6E; }
-  .video-card:nth-child(8n+8) { border-color: #6C5CE7; }
-
-  .card-thumb {
-    width: 100%;
-    aspect-ratio: 16/9;
-    object-fit: cover;
-    display: block;
-    background: #f0f0f0;
-  }
-
-  .card-thumb-placeholder {
-    width: 100%;
-    aspect-ratio: 16/9;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2.5rem;
-  }
-
-  .card-info {
-    padding: 10px 12px 12px;
-  }
-
-  .card-title {
-    font-weight: 800;
-    font-size: 0.82rem;
-    color: #333;
-    line-height: 1.3;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .play-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 8px;
-  }
-
-  .play-btn {
-    background: var(--orange);
-    color: white;
-    border: none;
-    border-radius: 50px;
-    padding: 4px 14px;
-    font-family: 'Nunito', sans-serif;
-    font-weight: 800;
-    font-size: 0.75rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-
-  /* Empty state */
-  .empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 60px 30px;
-    text-align: center;
-    position: relative;
-    z-index: 1;
-  }
-
-  .empty-emoji {
-    font-size: 5rem;
-    margin-bottom: 16px;
-    animation: bounce 2s ease infinite;
-  }
-
-  @keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-12px); }
-  }
-
-  .empty-title {
-    font-family: 'Fredoka One', cursive;
-    font-size: 1.4rem;
-    color: var(--orange);
-    margin-bottom: 8px;
-  }
-
-  .empty-subtitle {
-    font-size: 0.9rem;
-    color: #aaa;
-    font-weight: 600;
-    line-height: 1.5;
-  }
-
-  /* ─── PLAYER SCREEN ─── */
-  #player {
-    background: #000;
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    z-index: 100;
-    align-items: stretch;
-    justify-content: center;
-  }
-
-  #player.active { display: flex; }
-
-  .player-header {
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    z-index: 10;
-    padding: 12px 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 100%);
-  }
-
-  .back-btn {
-    background: rgba(255,255,255,0.2);
-    border: none;
-    border-radius: 50%;
-    width: 44px; height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    backdrop-filter: blur(8px);
-    color: white;
-    font-size: 1.3rem;
-    flex-shrink: 0;
-  }
-
-  .back-btn:active { background: rgba(255,255,255,0.4); }
-
-  .player-title {
-    font-family: 'Fredoka One', cursive;
-    color: white;
-    font-size: 1rem;
-    text-shadow: 0 1px 4px rgba(0,0,0,0.5);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  #youtube-frame {
-    width: 100%;
-    height: 100%;
-    border: none;
-  }
-
-  /* ─── PARENT PANEL ─── */
-  #parent-panel {
-    background: linear-gradient(160deg, #1a1a2e 0%, #16213e 100%);
-    padding: 0;
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    z-index: 200;
-    overflow-y: auto;
-  }
-
-  .panel-header {
-    padding: 50px 24px 20px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .panel-title {
-    font-family: 'Fredoka One', cursive;
-    color: white;
-    font-size: 1.6rem;
-  }
-
-  .panel-subtitle {
-    color: rgba(255,255,255,0.5);
-    font-size: 0.85rem;
-    font-weight: 600;
-    padding: 0 24px 20px;
-  }
-
-  .panel-section {
-    margin: 0 16px 20px;
-    background: rgba(255,255,255,0.07);
-    border-radius: 20px;
-    padding: 20px;
-  }
-
-  .panel-section-title {
-    color: var(--sun);
-    font-weight: 800;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    margin-bottom: 16px;
-  }
-
-  .input-group {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 14px;
-  }
-
-  .input-label {
-    color: rgba(255,255,255,0.7);
-    font-size: 0.8rem;
-    font-weight: 700;
-  }
-
-  .text-input {
-    background: rgba(255,255,255,0.1);
-    border: 2px solid rgba(255,255,255,0.15);
-    border-radius: 14px;
-    padding: 12px 16px;
-    color: white;
-    font-family: 'Nunito', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 600;
-    outline: none;
-    transition: border-color 0.2s;
-    width: 100%;
-  }
-
-  .text-input:focus { border-color: var(--sky); }
-  .text-input::placeholder { color: rgba(255,255,255,0.3); }
-
-  .add-btn {
-    background: linear-gradient(135deg, var(--orange), var(--coral));
-    color: white;
-    border: none;
-    border-radius: 14px;
-    padding: 14px;
-    font-family: 'Fredoka One', cursive;
-    font-size: 1rem;
-    cursor: pointer;
-    width: 100%;
-    letter-spacing: 0.5px;
-    box-shadow: 0 4px 16px rgba(255,107,53,0.4);
-    transition: transform 0.1s, box-shadow 0.1s;
-  }
-
-  .add-btn:active { transform: scale(0.97); box-shadow: 0 2px 8px rgba(255,107,53,0.3); }
-
-  .video-list { display: flex; flex-direction: column; gap: 10px; }
-
-  .video-list-item {
-    background: rgba(255,255,255,0.07);
-    border-radius: 14px;
-    padding: 12px 14px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .list-thumb {
-    width: 56px;
-    height: 42px;
-    border-radius: 8px;
-    object-fit: cover;
-    flex-shrink: 0;
-    background: rgba(255,255,255,0.1);
-  }
-
-  .list-thumb-placeholder {
-    width: 56px;
-    height: 42px;
-    border-radius: 8px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.4rem;
-    background: rgba(255,255,255,0.1);
-  }
-
-  .list-info { flex: 1; min-width: 0; }
-
-  .list-title {
-    color: white;
-    font-weight: 700;
-    font-size: 0.85rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .list-id {
-    color: rgba(255,255,255,0.4);
-    font-size: 0.7rem;
-    margin-top: 2px;
-  }
-
-  .delete-btn {
-    background: rgba(255,71,87,0.2);
-    border: none;
-    border-radius: 10px;
-    width: 36px; height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: var(--coral);
-    font-size: 1rem;
-    flex-shrink: 0;
-    transition: background 0.2s;
-  }
-
-  .delete-btn:active { background: rgba(255,71,87,0.4); }
-
-  .close-panel-btn {
-    margin: 4px 16px 30px;
-    background: rgba(255,255,255,0.08);
-    border: 2px solid rgba(255,255,255,0.15);
-    color: rgba(255,255,255,0.7);
-    border-radius: 14px;
-    padding: 14px;
-    font-family: 'Fredoka One', cursive;
-    font-size: 1rem;
-    cursor: pointer;
-    width: calc(100% - 32px);
-    letter-spacing: 0.5px;
-  }
-
-  .empty-list {
-    text-align: center;
-    color: rgba(255,255,255,0.3);
-    font-size: 0.85rem;
-    font-weight: 600;
-    padding: 20px 0;
-  }
-
-  /* ─── PIN SCREEN ─── */
-  #pin-screen {
-    background: linear-gradient(160deg, #1a1a2e 0%, #16213e 100%);
-    align-items: center;
-    justify-content: center;
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    z-index: 300;
-  }
-
-  .pin-box {
-    width: 100%;
-    max-width: 320px;
-    padding: 30px 24px;
-    text-align: center;
-  }
-
-  .pin-emoji {
-    font-size: 3.5rem;
-    margin-bottom: 16px;
-    display: block;
-  }
-
-  .pin-title {
-    font-family: 'Fredoka One', cursive;
-    color: white;
-    font-size: 1.5rem;
-    margin-bottom: 6px;
-  }
-
-  .pin-subtitle {
-    color: rgba(255,255,255,0.5);
-    font-size: 0.85rem;
-    font-weight: 600;
-    margin-bottom: 28px;
-  }
-
-  .pin-dots {
-    display: flex;
-    justify-content: center;
-    gap: 14px;
-    margin-bottom: 28px;
-  }
-
-  .pin-dot {
-    width: 18px; height: 18px;
-    border-radius: 50%;
-    border: 2.5px solid rgba(255,255,255,0.3);
-    background: transparent;
-    transition: all 0.15s;
-  }
-
-  .pin-dot.filled { background: var(--sun); border-color: var(--sun); }
-
-  .pin-keypad {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-  }
-
-  .pin-key {
-    background: rgba(255,255,255,0.08);
-    border: none;
-    border-radius: 50%;
-    width: 70px; height: 70px;
-    margin: 0 auto;
-    font-family: 'Fredoka One', cursive;
-    font-size: 1.5rem;
-    color: white;
-    cursor: pointer;
-    transition: background 0.1s, transform 0.1s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .pin-key:active { background: rgba(255,255,255,0.2); transform: scale(0.92); }
-  .pin-key.zero { grid-column: 2; }
-  .pin-key.del { background: rgba(255,71,87,0.15); color: var(--coral); }
-
-  .pin-error {
-    color: var(--coral);
-    font-size: 0.85rem;
-    font-weight: 700;
-    margin-top: 16px;
-    min-height: 20px;
-    animation: shake 0.3s ease;
-  }
-
-  @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-8px); }
-    75% { transform: translateX(8px); }
-  }
-
-  /* ─── TOAST ─── */
-  .toast {
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%) translateY(80px);
-    background: #333;
-    color: white;
-    padding: 12px 24px;
-    border-radius: 50px;
-    font-size: 0.85rem;
-    font-weight: 700;
-    z-index: 999;
-    transition: transform 0.3s ease;
-    white-space: nowrap;
-  }
-
-  .toast.show { transform: translateX(-50%) translateY(0); }
-
-  /* ─── CHANGE PIN SECTION ─── */
-  .change-pin-row {
-    display: flex;
-    gap: 8px;
-    align-items: flex-end;
-  }
-
-  .change-pin-row .text-input {
-    flex: 1;
-    letter-spacing: 6px;
-    font-size: 1.1rem;
-  }
-
-  .small-btn {
-    background: rgba(255,255,255,0.1);
-    border: 2px solid rgba(255,255,255,0.2);
-    color: white;
-    border-radius: 14px;
-    padding: 12px 16px;
-    font-family: 'Nunito', sans-serif;
-    font-weight: 800;
-    font-size: 0.8rem;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: background 0.2s;
-  }
-
-  .small-btn:active { background: rgba(255,255,255,0.2); }
-
-  /* Scrollbar hidden */
-  ::-webkit-scrollbar { display: none; }
+:root {
+  --orange: #FF6B35;
+  --coral: #FF4757;
+  --sky: #48C9F8;
+  --sun: #FFD93D;
+  --mint: #2ECC71;
+  --purple: #A29BFE;
+  --bg: #FFF8F0;
+  --radius: 22px;
+  --shadow: 0 8px 24px rgba(0,0,0,0.11);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { font-family: 'Nunito', sans-serif; background: var(--bg); min-height: 100vh; overflow-x: hidden; user-select: none; }
+
+/* SCREENS */
+.screen { display: none; min-height: 100vh; flex-direction: column; }
+.screen.active { display: flex; }
+
+/* ── HOME ── */
+#home { background: linear-gradient(160deg, #FFF8F0 0%, #FFF0E8 100%); padding-bottom: 30px; }
+
+.home-header {
+  padding: 20px 18px 10px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 10;
+  background: linear-gradient(to bottom, #FFF8F0 80%, transparent);
+}
+
+.app-logo {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.9rem; color: var(--orange);
+  display: flex; align-items: center; gap: 6px;
+  cursor: pointer;
+}
+.logo-star { display: inline-block; animation: spin 4s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Category tabs */
+.cat-scroll {
+  display: flex; gap: 10px; overflow-x: auto;
+  padding: 6px 18px 14px; scroll-snap-type: x mandatory;
+}
+.cat-scroll::-webkit-scrollbar { display: none; }
+
+.cat-tab {
+  flex-shrink: 0; scroll-snap-align: start;
+  background: #fff; border: 2.5px solid #eee;
+  border-radius: 50px; padding: 7px 18px;
+  font-family: 'Nunito', sans-serif; font-weight: 800;
+  font-size: 0.82rem; color: #999; cursor: pointer;
+  transition: all 0.18s; white-space: nowrap;
+}
+.cat-tab.active {
+  background: var(--orange); border-color: var(--orange);
+  color: white; box-shadow: 0 4px 12px rgba(255,107,53,0.3);
+}
+
+/* Video grid */
+.video-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: 14px; padding: 4px 14px 14px;
+}
+
+.video-card {
+  background: #fff; border-radius: var(--radius);
+  overflow: hidden; box-shadow: var(--shadow);
+  cursor: pointer; border: 3px solid transparent;
+  animation: popIn 0.35s ease both;
+  transition: transform 0.12s, box-shadow 0.12s;
+}
+.video-card:active { transform: scale(0.94); box-shadow: 0 3px 10px rgba(0,0,0,0.09); }
+
+@keyframes popIn { from { transform: scale(0.82); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+.video-card:nth-child(8n+1) { border-color: #FFD93D; }
+.video-card:nth-child(8n+2) { border-color: #48C9F8; }
+.video-card:nth-child(8n+3) { border-color: #2ECC71; }
+.video-card:nth-child(8n+4) { border-color: #A29BFE; }
+.video-card:nth-child(8n+5) { border-color: #FF6B35; }
+.video-card:nth-child(8n+6) { border-color: #FF4757; }
+.video-card:nth-child(8n+7) { border-color: #FDCB6E; }
+.video-card:nth-child(8n+8) { border-color: #6C5CE7; }
+
+.card-thumb {
+  width: 100%; aspect-ratio: 16/9;
+  object-fit: cover; display: block; background: #f0f0f0;
+}
+.card-thumb-placeholder {
+  width: 100%; aspect-ratio: 16/9;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.6rem;
+}
+.card-info { padding: 9px 11px 11px; }
+.card-title {
+  font-weight: 800; font-size: 0.8rem; color: #333;
+  line-height: 1.3;
+  display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden;
+}
+.card-cat-badge {
+  display: inline-block; margin-top: 6px;
+  background: #f4f4f4; border-radius: 20px;
+  padding: 2px 9px; font-size: 0.68rem;
+  font-weight: 700; color: #999;
+}
+.play-icon { display: flex; justify-content: center; margin-top: 7px; }
+.play-btn {
+  background: var(--orange); color: white; border: none;
+  border-radius: 50px; padding: 4px 14px;
+  font-family: 'Nunito', sans-serif; font-weight: 800;
+  font-size: 0.74rem; cursor: pointer;
+}
+
+/* Empty state */
+.empty-state {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 60px 30px; text-align: center;
+}
+.empty-emoji { font-size: 5rem; margin-bottom: 14px; animation: bounce 2s ease infinite; }
+@keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+.empty-title { font-family: 'Fredoka One', cursive; font-size: 1.4rem; color: var(--orange); margin-bottom: 8px; }
+.empty-subtitle { font-size: 0.88rem; color: #bbb; font-weight: 600; line-height: 1.6; }
+
+/* ── PLAYER ── */
+#player {
+  background: #000; position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 100; align-items: stretch; justify-content: center;
+}
+#player.active { display: flex; flex-direction: column; }
+
+.player-header {
+  position: absolute; top: 0; left: 0; right: 0; z-index: 10;
+  padding: 12px 16px; display: flex; align-items: center; gap: 12px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 100%);
+}
+.back-btn {
+  background: rgba(255,255,255,0.18); border: none; border-radius: 50%;
+  width: 44px; height: 44px; display: flex; align-items: center;
+  justify-content: center; cursor: pointer;
+  backdrop-filter: blur(8px); color: white; font-size: 1.3rem; flex-shrink: 0;
+}
+.back-btn:active { background: rgba(255,255,255,0.35); }
+.player-title {
+  font-family: 'Fredoka One', cursive; color: white; font-size: 1rem;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+#video-frame { width: 100%; height: 100%; border: none; }
+
+/* Video ended overlay */
+#ended-overlay {
+  display: none; position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.85);
+  flex-direction: column; align-items: center; justify-content: center;
+  z-index: 20; text-align: center; padding: 30px;
+}
+#ended-overlay.show { display: flex; }
+.ended-emoji { font-size: 5rem; margin-bottom: 16px; animation: bounce 1.5s ease infinite; }
+.ended-title { font-family: 'Fredoka One', cursive; color: white; font-size: 1.6rem; margin-bottom: 8px; }
+.ended-sub { color: rgba(255,255,255,0.6); font-size: 0.9rem; font-weight: 600; margin-bottom: 28px; }
+.ended-home-btn {
+  background: var(--orange); color: white; border: none;
+  border-radius: 50px; padding: 14px 36px;
+  font-family: 'Fredoka One', cursive; font-size: 1.1rem;
+  cursor: pointer; box-shadow: 0 4px 16px rgba(255,107,53,0.4);
+}
+.ended-countdown {
+  color: rgba(255,255,255,0.45); font-size: 0.8rem;
+  font-weight: 700; margin-top: 12px;
+}
+
+/* ── PIN SCREEN ── */
+#pin-screen {
+  background: linear-gradient(160deg, #1a1a2e 0%, #16213e 100%);
+  align-items: center; justify-content: center;
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 300;
+}
+.pin-box { width: 100%; max-width: 320px; padding: 30px 24px; text-align: center; }
+.pin-emoji { font-size: 3.5rem; margin-bottom: 14px; display: block; }
+.pin-title { font-family: 'Fredoka One', cursive; color: white; font-size: 1.5rem; margin-bottom: 5px; }
+.pin-subtitle { color: rgba(255,255,255,0.5); font-size: 0.85rem; font-weight: 600; margin-bottom: 28px; }
+.pin-dots { display: flex; justify-content: center; gap: 14px; margin-bottom: 28px; }
+.pin-dot { width: 18px; height: 18px; border-radius: 50%; border: 2.5px solid rgba(255,255,255,0.3); background: transparent; transition: all 0.15s; }
+.pin-dot.filled { background: var(--sun); border-color: var(--sun); }
+.pin-keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.pin-key {
+  background: rgba(255,255,255,0.08); border: none; border-radius: 50%;
+  width: 70px; height: 70px; margin: 0 auto;
+  font-family: 'Fredoka One', cursive; font-size: 1.5rem; color: white;
+  cursor: pointer; transition: background 0.1s, transform 0.1s;
+  display: flex; align-items: center; justify-content: center;
+}
+.pin-key:active { background: rgba(255,255,255,0.2); transform: scale(0.92); }
+.pin-key.zero { grid-column: 2; }
+.pin-key.del { background: rgba(255,71,87,0.15); color: var(--coral); }
+.pin-error { color: var(--coral); font-size: 0.85rem; font-weight: 700; margin-top: 16px; min-height: 20px; }
+
+/* ── PARENT PANEL ── */
+#parent-panel {
+  background: linear-gradient(160deg, #1a1a2e 0%, #16213e 100%);
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 200; overflow-y: auto;
+}
+.panel-header { padding: 50px 24px 4px; display: flex; align-items: center; gap: 12px; }
+.panel-title { font-family: 'Fredoka One', cursive; color: white; font-size: 1.6rem; }
+.panel-subtitle { color: rgba(255,255,255,0.45); font-size: 0.82rem; font-weight: 600; padding: 4px 24px 18px; }
+.panel-section { margin: 0 14px 18px; background: rgba(255,255,255,0.07); border-radius: 20px; padding: 18px; }
+.panel-section-title { color: var(--sun); font-weight: 800; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 14px; }
+
+.input-label { color: rgba(255,255,255,0.65); font-size: 0.78rem; font-weight: 700; margin-bottom: 6px; display: block; }
+.text-input {
+  background: rgba(255,255,255,0.09); border: 2px solid rgba(255,255,255,0.13);
+  border-radius: 13px; padding: 11px 15px; color: white;
+  font-family: 'Nunito', sans-serif; font-size: 0.88rem; font-weight: 600;
+  outline: none; width: 100%; margin-bottom: 10px; transition: border-color 0.2s;
+}
+.text-input:focus { border-color: var(--sky); }
+.text-input::placeholder { color: rgba(255,255,255,0.28); }
+
+.input-row { display: flex; gap: 8px; }
+.input-row .text-input { flex: 1; margin-bottom: 0; }
+
+.add-btn {
+  background: linear-gradient(135deg, var(--orange), var(--coral));
+  color: white; border: none; border-radius: 13px; padding: 13px;
+  font-family: 'Fredoka One', cursive; font-size: 0.95rem;
+  cursor: pointer; width: 100%; letter-spacing: 0.5px;
+  box-shadow: 0 4px 14px rgba(255,107,53,0.35);
+  transition: transform 0.1s;
+}
+.add-btn:active { transform: scale(0.97); }
+
+/* Category manager */
+.cat-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.cat-chip {
+  background: rgba(255,255,255,0.1); border-radius: 50px;
+  padding: 6px 14px; font-size: 0.8rem; font-weight: 700; color: white;
+  display: flex; align-items: center; gap: 6px; cursor: default;
+}
+.cat-chip-del {
+  background: none; border: none; color: var(--coral);
+  cursor: pointer; font-size: 0.9rem; padding: 0;
+}
+
+/* Video list in panel */
+.video-list { display: flex; flex-direction: column; gap: 9px; }
+.video-list-item {
+  background: rgba(255,255,255,0.06); border-radius: 13px;
+  padding: 11px 13px; display: flex; align-items: center; gap: 11px;
+}
+.list-thumb { width: 54px; height: 40px; border-radius: 8px; object-fit: cover; flex-shrink: 0; background: rgba(255,255,255,0.1); }
+.list-thumb-placeholder { width: 54px; height: 40px; border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; background: rgba(255,255,255,0.1); }
+.list-info { flex: 1; min-width: 0; }
+.list-title { color: white; font-weight: 700; font-size: 0.82rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.list-meta { color: rgba(255,255,255,0.35); font-size: 0.68rem; margin-top: 2px; }
+.delete-btn { background: rgba(255,71,87,0.18); border: none; border-radius: 9px; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--coral); font-size: 0.95rem; flex-shrink: 0; }
+.delete-btn:active { background: rgba(255,71,87,0.35); }
+.empty-list { text-align: center; color: rgba(255,255,255,0.28); font-size: 0.83rem; font-weight: 600; padding: 18px 0; }
+
+.change-pin-row { display: flex; gap: 8px; align-items: center; }
+.change-pin-row .text-input { flex: 1; margin-bottom: 0; }
+.small-btn { background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.18); color: white; border-radius: 13px; padding: 11px 14px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.78rem; cursor: pointer; white-space: nowrap; }
+.small-btn:active { background: rgba(255,255,255,0.2); }
+
+.close-panel-btn { margin: 4px 14px 30px; background: rgba(255,255,255,0.07); border: 2px solid rgba(255,255,255,0.13); color: rgba(255,255,255,0.65); border-radius: 13px; padding: 13px; font-family: 'Fredoka One', cursive; font-size: 0.95rem; cursor: pointer; width: calc(100% - 28px); }
+
+/* TOAST */
+.toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px); background: #333; color: white; padding: 11px 22px; border-radius: 50px; font-size: 0.83rem; font-weight: 700; z-index: 999; transition: transform 0.3s ease; white-space: nowrap; }
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+::-webkit-scrollbar { display: none; }
 </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════ HOME SCREEN ═══════════════════════════════ -->
+<!-- ══ HOME ══ -->
 <div id="home" class="screen active">
-  <div class="bubbles">
-    <div class="bubble bubble-1"></div>
-    <div class="bubble bubble-2"></div>
-    <div class="bubble bubble-3"></div>
-  </div>
-
   <div class="home-header">
     <div class="app-logo" id="secret-tap">
       <span class="logo-star">⭐</span> HamzaTV
     </div>
-    <div class="greeting">Bugün ne izleyelim?</div>
   </div>
-
-  <div class="section-title">🎬 Videolar</div>
-
+  <div class="cat-scroll" id="cat-tabs"></div>
   <div id="video-grid" class="video-grid"></div>
 </div>
 
-<!-- ═══════════════════════════════ PLAYER SCREEN ═══════════════════════════════ -->
+<!-- ══ PLAYER ══ -->
 <div id="player" class="screen">
   <div class="player-header">
     <button class="back-btn" onclick="closePlayer()">←</button>
     <div class="player-title" id="player-title"></div>
   </div>
-  <iframe
-    id="youtube-frame"
-    allow="autoplay; fullscreen"
-    allowfullscreen
-    frameborder="0">
-  </iframe>
+  <iframe id="video-frame" allow="autoplay; fullscreen" allowfullscreen frameborder="0"></iframe>
+  <div id="ended-overlay">
+    <div class="ended-emoji">🌟</div>
+    <div class="ended-title">Video bitti!</div>
+    <div class="ended-sub">Çok güzeldi değil mi?</div>
+    <button class="ended-home-btn" onclick="closePlayer()">🏠 Ana Sayfaya Dön</button>
+    <div class="ended-countdown" id="ended-countdown"></div>
+  </div>
 </div>
 
-<!-- ═══════════════════════════════ PIN SCREEN ═══════════════════════════════ -->
+<!-- ══ PIN ══ -->
 <div id="pin-screen" class="screen">
   <div class="pin-box">
     <span class="pin-emoji">🔐</span>
     <div class="pin-title" id="pin-title">Ebeveyn Girişi</div>
     <div class="pin-subtitle" id="pin-subtitle">4 haneli PIN kodunu gir</div>
-
     <div class="pin-dots">
       <div class="pin-dot" id="dot-0"></div>
       <div class="pin-dot" id="dot-1"></div>
       <div class="pin-dot" id="dot-2"></div>
       <div class="pin-dot" id="dot-3"></div>
     </div>
-
     <div class="pin-keypad">
       <button class="pin-key" onclick="pinKey('1')">1</button>
       <button class="pin-key" onclick="pinKey('2')">2</button>
@@ -693,52 +343,63 @@
       <button class="pin-key zero" onclick="pinKey('0')">0</button>
       <button class="pin-key del" onclick="pinDel()">⌫</button>
     </div>
-
     <div class="pin-error" id="pin-error"></div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════ PARENT PANEL ═══════════════════════════════ -->
+<!-- ══ PARENT PANEL ══ -->
 <div id="parent-panel" class="screen">
   <div class="panel-header">
-    <span style="font-size:1.6rem">🎛️</span>
+    <span style="font-size:1.5rem">🎛️</span>
     <div class="panel-title">Ebeveyn Paneli</div>
   </div>
-  <div class="panel-subtitle">Video ekle, sil veya PIN değiştir</div>
+  <div class="panel-subtitle">Video ve kategori yönetimi</div>
 
-  <!-- Add Video -->
+  <!-- Kategoriler -->
+  <div class="panel-section">
+    <div class="panel-section-title">🗂️ Kategoriler</div>
+    <div id="cat-chip-list" class="cat-list"></div>
+    <div class="input-row">
+      <input type="text" class="text-input" id="input-cat" placeholder="Yeni kategori adı (ör: Masal)">
+      <button class="small-btn" onclick="addCategory()">+ Ekle</button>
+    </div>
+  </div>
+
+  <!-- Video Ekle -->
   <div class="panel-section">
     <div class="panel-section-title">➕ Video Ekle</div>
-    <div class="input-group">
-      <div class="input-label">YouTube Linki veya Video ID</div>
-      <input type="text" class="text-input" id="input-url"
-        placeholder="YouTube linki, Drive linki veya video kodu">
-    </div>
-    <div class="input-group">
-      <div class="input-label">Video Başlığı</div>
-      <input type="text" class="text-input" id="input-title"
-        placeholder="ör: Peppa Pig - Çamur Banyosu">
-    </div>
-    <div class="input-group">
-      <div class="input-label">Emoji (isteğe bağlı)</div>
-      <input type="text" class="text-input" id="input-emoji"
-        placeholder="ör: 🐷 🦕 🚗" maxlength="4">
-    </div>
+
+    <label class="input-label">Google Drive Paylaşım Linki</label>
+    <input type="text" class="text-input" id="input-url" placeholder="drive.google.com/file/d/...">
+
+    <label class="input-label">Video Başlığı</label>
+    <input type="text" class="text-input" id="input-title" placeholder="ör: Peppa Pig - Çamur Banyosu">
+
+    <label class="input-label">Kapak Fotoğrafı (Drive resim linki, isteğe bağlı)</label>
+    <input type="text" class="text-input" id="input-cover" placeholder="drive.google.com/file/d/...">
+
+    <label class="input-label">Kategori</label>
+    <select class="text-input" id="input-cat-select" style="appearance:none; cursor:pointer;">
+      <option value="">— Kategorisiz —</option>
+    </select>
+
+    <label class="input-label">Emoji (isteğe bağlı)</label>
+    <input type="text" class="text-input" id="input-emoji" placeholder="ör: 🐷 🦕 🚗" maxlength="4">
+
     <button class="add-btn" onclick="addVideo()">✅ Videoyu Ekle</button>
   </div>
 
-  <!-- Video List -->
+  <!-- Video Listesi -->
   <div class="panel-section">
     <div class="panel-section-title">📋 Mevcut Videolar</div>
     <div id="video-list" class="video-list"></div>
   </div>
 
-  <!-- Change PIN -->
+  <!-- PIN Değiştir -->
   <div class="panel-section">
     <div class="panel-section-title">🔑 PIN Değiştir</div>
     <div class="change-pin-row">
-      <input type="password" class="text-input" id="new-pin"
-        placeholder="Yeni 4 haneli PIN" maxlength="4" inputmode="numeric">
+      <input type="password" class="text-input" id="new-pin" placeholder="Yeni 4 haneli PIN" maxlength="4" inputmode="numeric">
       <button class="small-btn" onclick="changePin()">Kaydet</button>
     </div>
   </div>
@@ -746,151 +407,231 @@
   <button class="close-panel-btn" onclick="closePanel()">← Çocuk Ekranına Dön</button>
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ═══════════════════════ STATE ═══════════════════════
+// ══ STATE ══
 const DEFAULT_PIN = '1234';
 let state = {
   videos: [],
+  categories: ['Çizgi Film', 'Masal', 'Eğitim'],
   pin: DEFAULT_PIN,
-  pinMode: 'verify', // 'verify' | 'setup'
+  activeCategory: 'Tümü',
+  pinMode: 'verify',
   pinBuffer: '',
   secretTapCount: 0,
-  secretTapTimer: null
+  secretTapTimer: null,
+  endedTimer: null
 };
 
-// ═══════════════════════ STORAGE ═══════════════════════
+// ══ STORAGE ══
 function save() {
   try {
-    localStorage.setItem('minitv_videos', JSON.stringify(state.videos));
-    localStorage.setItem('minitv_pin', state.pin);
+    localStorage.setItem('hamzatv_v', JSON.stringify(state.videos));
+    localStorage.setItem('hamzatv_c', JSON.stringify(state.categories));
+    localStorage.setItem('hamzatv_p', state.pin);
   } catch(e) {}
 }
 
 function load() {
   try {
-    const v = localStorage.getItem('minitv_videos');
-    const p = localStorage.getItem('minitv_pin');
+    const v = localStorage.getItem('hamzatv_v');
+    const c = localStorage.getItem('hamzatv_c');
+    const p = localStorage.getItem('hamzatv_p');
     if (v) state.videos = JSON.parse(v);
+    if (c) state.categories = JSON.parse(c);
     if (p) state.pin = p;
   } catch(e) {}
 }
 
-// ═══════════════════════ YOUTUBE UTILS ═══════════════════════
-function extractYouTubeId(input) {
-  input = input.trim();
-  if (/^[a-zA-Z0-9_-]{11}$/.test(input)) return input;
-  let m = input.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
-  if (m) return m[1];
-  m = input.match(/[?&]v=([a-zA-Z0-9_-]{11})/);
-  if (m) return m[1];
-  m = input.match(/embed\/([a-zA-Z0-9_-]{11})/);
-  if (m) return m[1];
-  m = input.match(/shorts\/([a-zA-Z0-9_-]{11})/);
-  if (m) return m[1];
-  return null;
-}
-
+// ══ DRIVE UTILS ══
 function extractDriveId(input) {
+  if (!input) return null;
   input = input.trim();
-  // drive.google.com/file/d/ID/...
   let m = input.match(/\/file\/d\/([a-zA-Z0-9_-]{10,})/);
   if (m) return m[1];
-  // drive.google.com/open?id=ID
   m = input.match(/[?&]id=([a-zA-Z0-9_-]{10,})/);
   if (m) return m[1];
+  // plain ID
+  if (/^[a-zA-Z0-9_-]{25,}$/.test(input)) return input;
   return null;
 }
 
-function isDriveUrl(input) {
-  return input.includes('drive.google.com') || input.includes('docs.google.com');
+function driveThumb(id) {
+  return `https://drive.google.com/thumbnail?id=${id}&sz=w400`;
 }
 
-function thumbUrl(id) {
-  return `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
+function driveEmbed(id) {
+  return `https://drive.google.com/file/d/${id}/preview`;
 }
 
-function embedUrl(video) {
-  if (video.type === 'drive') {
-    return `https://drive.google.com/file/d/${video.id}/preview`;
-  }
-  return `https://www.youtube.com/embed/${video.id}?autoplay=1&rel=0&modestbranding=1&iv_load_policy=3&disablekb=0&fs=1&playsinline=1`;
+// ══ CATEGORIES ══
+function renderCatTabs() {
+  const tabs = document.getElementById('cat-tabs');
+  tabs.innerHTML = '';
+  const all = ['Tümü', ...state.categories];
+  all.forEach(cat => {
+    const tab = document.createElement('button');
+    tab.className = 'cat-tab' + (state.activeCategory === cat ? ' active' : '');
+    tab.textContent = cat;
+    tab.onclick = () => { state.activeCategory = cat; renderCatTabs(); renderHome(); };
+    tabs.appendChild(tab);
+  });
 }
 
-// ═══════════════════════ HOME SCREEN ═══════════════════════
+function renderCatChips() {
+  const list = document.getElementById('cat-chip-list');
+  list.innerHTML = '';
+  state.categories.forEach((cat, i) => {
+    const chip = document.createElement('div');
+    chip.className = 'cat-chip';
+    chip.innerHTML = `${escHtml(cat)} <button class="cat-chip-del" onclick="deleteCategory(${i})">✕</button>`;
+    list.appendChild(chip);
+  });
+
+  const sel = document.getElementById('input-cat-select');
+  sel.innerHTML = '<option value="">— Kategorisiz —</option>';
+  state.categories.forEach(cat => {
+    const opt = document.createElement('option');
+    opt.value = cat; opt.textContent = cat;
+    sel.appendChild(opt);
+  });
+}
+
+function addCategory() {
+  const val = document.getElementById('input-cat').value.trim();
+  if (!val) { showToast('⚠️ Kategori adı gir'); return; }
+  if (state.categories.includes(val)) { showToast('⚠️ Bu kategori zaten var'); return; }
+  state.categories.push(val);
+  save(); renderCatChips(); renderCatTabs();
+  document.getElementById('input-cat').value = '';
+  showToast('✅ Kategori eklendi');
+}
+
+function deleteCategory(i) {
+  const cat = state.categories[i];
+  if (!confirm(`"${cat}" kategorisi silinsin mi?`)) return;
+  state.categories.splice(i, 1);
+  // remove category from videos
+  state.videos.forEach(v => { if (v.category === cat) v.category = ''; });
+  if (state.activeCategory === cat) state.activeCategory = 'Tümü';
+  save(); renderCatChips(); renderCatTabs(); renderHome();
+  showToast('🗑️ Kategori silindi');
+}
+
+// ══ HOME RENDER ══
 function renderHome() {
   const grid = document.getElementById('video-grid');
   grid.innerHTML = '';
 
-  if (state.videos.length === 0) {
+  const filtered = state.activeCategory === 'Tümü'
+    ? state.videos
+    : state.videos.filter(v => v.category === state.activeCategory);
+
+  if (filtered.length === 0) {
     grid.style.display = 'none';
-    const existing = document.getElementById('empty-state');
-    if (!existing) {
+    if (!document.getElementById('empty-state')) {
       const empty = document.createElement('div');
-      empty.className = 'empty-state';
-      empty.id = 'empty-state';
+      empty.className = 'empty-state'; empty.id = 'empty-state';
       empty.innerHTML = `
         <div class="empty-emoji">🎭</div>
-        <div class="empty-title">Henüz video yok!</div>
-        <div class="empty-subtitle">⭐ logosuna 5 kez dokun<br>ve video ekle</div>
-      `;
+        <div class="empty-title">${state.activeCategory === 'Tümü' ? 'Henüz video yok!' : 'Bu kategoride video yok'}</div>
+        <div class="empty-subtitle">⭐ logosuna 5 kez dokun<br>ve video ekle</div>`;
       document.getElementById('home').appendChild(empty);
     }
     return;
   }
 
   grid.style.display = 'grid';
-  const existing = document.getElementById('empty-state');
-  if (existing) existing.remove();
+  const e = document.getElementById('empty-state');
+  if (e) e.remove();
 
-  state.videos.forEach((v, i) => {
+  filtered.forEach((v, i) => {
     const card = document.createElement('div');
     card.className = 'video-card';
-    card.style.animationDelay = `${i * 0.07}s`;
+    card.style.animationDelay = `${i * 0.06}s`;
     card.onclick = () => openPlayer(v);
 
-    const thumbHtml = (v.emoji || v.type === 'drive')
-      ? `<div class="card-thumb-placeholder" style="background:${cardColor(i)}">${v.emoji || '📁'}</div>`
-      : `<img class="card-thumb" src="${thumbUrl(v.id)}" onerror="this.parentNode.innerHTML='<div class=\\"card-thumb-placeholder\\" style=\\"background:${cardColor(i)}\\">🎬</div>'" loading="lazy">`;
+    let thumbHtml;
+    if (v.coverId) {
+      thumbHtml = `<img class="card-thumb" src="${driveThumb(v.coverId)}" onerror="this.outerHTML='<div class=\\"card-thumb-placeholder\\" style=\\"background:${cardColor(i)}\\">${v.emoji || '🎬'}</div>'" loading="lazy">`;
+    } else if (v.emoji) {
+      thumbHtml = `<div class="card-thumb-placeholder" style="background:${cardColor(i)}">${v.emoji}</div>`;
+    } else {
+      thumbHtml = `<div class="card-thumb-placeholder" style="background:${cardColor(i)}">🎬</div>`;
+    }
 
     card.innerHTML = `
       ${thumbHtml}
       <div class="card-info">
         <div class="card-title">${escHtml(v.title)}</div>
-        <div class="play-icon">
-          <button class="play-btn">▶ İzle</button>
-        </div>
-      </div>
-    `;
+        ${v.category ? `<span class="card-cat-badge">${escHtml(v.category)}</span>` : ''}
+        <div class="play-icon"><button class="play-btn">▶ İzle</button></div>
+      </div>`;
     grid.appendChild(card);
   });
 }
 
 function cardColor(i) {
-  const colors = ['#FFD93D','#48C9F8','#2ECC71','#A29BFE','#FF6B35','#FF4757','#FDCB6E','#6C5CE7'];
-  return colors[i % colors.length] + '33';
+  const c = ['#FFD93D','#48C9F8','#2ECC71','#A29BFE','#FF6B35','#FF4757','#FDCB6E','#6C5CE7'];
+  return c[i % c.length] + '30';
 }
 
-// ═══════════════════════ PLAYER ═══════════════════════
+// ══ PLAYER ══
 function openPlayer(video) {
   document.getElementById('player-title').textContent = video.title;
-  document.getElementById('youtube-frame').src = embedUrl(video);
+  document.getElementById('video-frame').src = driveEmbed(video.id);
+  document.getElementById('ended-overlay').classList.remove('show');
   showScreen('player');
-  try {
-    const el = document.documentElement;
-    if (el.requestFullscreen) el.requestFullscreen();
-  } catch(e) {}
+  startEndedWatcher();
+  try { document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); } catch(e) {}
 }
 
 function closePlayer() {
-  document.getElementById('youtube-frame').src = '';
-  try { if (document.exitFullscreen) document.exitFullscreen(); } catch(e) {}
+  clearEndedWatcher();
+  document.getElementById('video-frame').src = '';
+  document.getElementById('ended-overlay').classList.remove('show');
+  try { document.exitFullscreen && document.exitFullscreen(); } catch(e) {}
   showScreen('home');
 }
 
-// ═══════════════════════ SECRET TAP ═══════════════════════
+// Video ended detection via postMessage from Drive iframe
+window.addEventListener('message', (e) => {
+  if (e.data && (e.data.event === 'onStateChange') && e.data.info === 0) {
+    showEndedOverlay();
+  }
+});
+
+// Fallback: poll iframe title for ended state (Drive changes title when done)
+let endedWatchInterval = null;
+function startEndedWatcher() {
+  clearEndedWatcher();
+  // Auto-close after very long time as safety net (3 hours)
+  state.endedTimer = setTimeout(() => { closePlayer(); }, 3 * 60 * 60 * 1000);
+}
+function clearEndedWatcher() {
+  if (endedWatchInterval) { clearInterval(endedWatchInterval); endedWatchInterval = null; }
+  if (state.endedTimer) { clearTimeout(state.endedTimer); state.endedTimer = null; }
+  if (state.countdownTimer) { clearInterval(state.countdownTimer); state.countdownTimer = null; }
+}
+
+function showEndedOverlay() {
+  document.getElementById('ended-overlay').classList.add('show');
+  let secs = 10;
+  const cd = document.getElementById('ended-countdown');
+  cd.textContent = `${secs} saniye içinde ana sayfaya dönülecek...`;
+  state.countdownTimer = setInterval(() => {
+    secs--;
+    if (secs <= 0) {
+      clearInterval(state.countdownTimer);
+      closePlayer();
+    } else {
+      cd.textContent = `${secs} saniye içinde ana sayfaya dönülecek...`;
+    }
+  }, 1000);
+}
+
+// ══ SECRET TAP ══
 document.getElementById('secret-tap').addEventListener('click', () => {
   state.secretTapCount++;
   clearTimeout(state.secretTapTimer);
@@ -902,19 +643,13 @@ document.getElementById('secret-tap').addEventListener('click', () => {
   }
 });
 
-// ═══════════════════════ PIN ═══════════════════════
+// ══ PIN ══
 function openPinScreen(mode) {
-  state.pinMode = mode;
-  state.pinBuffer = '';
+  state.pinMode = mode; state.pinBuffer = '';
   updatePinDots();
   document.getElementById('pin-error').textContent = '';
-  if (mode === 'setup') {
-    document.getElementById('pin-title').textContent = 'PIN Oluştur';
-    document.getElementById('pin-subtitle').textContent = 'İlk kullanım için PIN belirle';
-  } else {
-    document.getElementById('pin-title').textContent = 'Ebeveyn Girişi';
-    document.getElementById('pin-subtitle').textContent = '4 haneli PIN kodunu gir';
-  }
+  document.getElementById('pin-title').textContent = mode === 'setup' ? 'PIN Oluştur' : 'Ebeveyn Girişi';
+  document.getElementById('pin-subtitle').textContent = mode === 'setup' ? 'İlk kullanım için PIN belirle' : '4 haneli PIN kodunu gir';
   showScreen('pin-screen');
 }
 
@@ -922,9 +657,7 @@ function pinKey(k) {
   if (state.pinBuffer.length >= 4) return;
   state.pinBuffer += k;
   updatePinDots();
-  if (state.pinBuffer.length === 4) {
-    setTimeout(checkPin, 150);
-  }
+  if (state.pinBuffer.length === 4) setTimeout(checkPin, 150);
 }
 
 function pinDel() {
@@ -934,169 +667,120 @@ function pinDel() {
 }
 
 function updatePinDots() {
-  for (let i = 0; i < 4; i++) {
-    const dot = document.getElementById(`dot-${i}`);
-    dot.classList.toggle('filled', i < state.pinBuffer.length);
-  }
+  for (let i = 0; i < 4; i++)
+    document.getElementById(`dot-${i}`).classList.toggle('filled', i < state.pinBuffer.length);
 }
 
 function checkPin() {
-  if (state.pinMode === 'setup') {
-    state.pin = state.pinBuffer;
-    save();
+  if (state.pinBuffer === state.pin) {
     showScreen('parent-panel');
     renderPanel();
-    showToast('PIN kaydedildi! Hoş geldin 👋');
   } else {
-    if (state.pinBuffer === state.pin) {
-      showScreen('parent-panel');
-      renderPanel();
-    } else {
-      document.getElementById('pin-error').textContent = '❌ Yanlış PIN, tekrar dene';
-      state.pinBuffer = '';
-      updatePinDots();
-    }
+    document.getElementById('pin-error').textContent = '❌ Yanlış PIN, tekrar dene';
+    state.pinBuffer = ''; updatePinDots();
   }
 }
 
-// ═══════════════════════ PARENT PANEL ═══════════════════════
+// ══ PARENT PANEL ══
 function renderPanel() {
+  renderCatChips();
   const list = document.getElementById('video-list');
   list.innerHTML = '';
-
   if (state.videos.length === 0) {
     list.innerHTML = '<div class="empty-list">Henüz video eklenmedi</div>';
     return;
   }
-
   state.videos.forEach((v, i) => {
     const item = document.createElement('div');
     item.className = 'video-list-item';
-
-    const thumbHtml = (v.emoji || v.type === 'drive')
-      ? `<div class="list-thumb-placeholder">${v.emoji || '📁'}</div>`
-      : `<img class="list-thumb" src="${thumbUrl(v.id)}" onerror="this.style.display='none'">`;
-
+    const thumbHtml = v.coverId
+      ? `<img class="list-thumb" src="${driveThumb(v.coverId)}" onerror="this.outerHTML='<div class=\\"list-thumb-placeholder\\">${v.emoji || '🎬'}</div>'">`
+      : `<div class="list-thumb-placeholder">${v.emoji || '🎬'}</div>`;
     item.innerHTML = `
       ${thumbHtml}
       <div class="list-info">
         <div class="list-title">${escHtml(v.title)}</div>
-        <div class="list-id">${v.id}</div>
+        <div class="list-meta">${v.category || 'Kategorisiz'} · Drive</div>
       </div>
-      <button class="delete-btn" onclick="deleteVideo(${i})">🗑️</button>
-    `;
+      <button class="delete-btn" onclick="deleteVideo(${i})">🗑️</button>`;
     list.appendChild(item);
   });
 }
 
 function addVideo() {
-  const urlInput = document.getElementById('input-url').value.trim();
-  const titleInput = document.getElementById('input-title').value.trim();
-  const emojiInput = document.getElementById('input-emoji').value.trim();
+  const urlVal   = document.getElementById('input-url').value.trim();
+  const titleVal = document.getElementById('input-title').value.trim();
+  const coverVal = document.getElementById('input-cover').value.trim();
+  const catVal   = document.getElementById('input-cat-select').value;
+  const emojiVal = document.getElementById('input-emoji').value.trim();
 
-  if (!urlInput) { showToast('⚠️ Link gerekli'); return; }
-  if (!titleInput) { showToast('⚠️ Video başlığı gerekli'); return; }
+  if (!urlVal)   { showToast('⚠️ Drive linki gerekli'); return; }
+  if (!titleVal) { showToast('⚠️ Başlık gerekli'); return; }
 
-  let videoObj = null;
+  const id = extractDriveId(urlVal);
+  if (!id) { showToast('❌ Geçersiz Drive linki'); return; }
 
-  if (isDriveUrl(urlInput)) {
-    const driveId = extractDriveId(urlInput);
-    if (!driveId) { showToast('❌ Geçersiz Drive linki'); return; }
-    videoObj = { id: driveId, type: 'drive', title: titleInput, emoji: emojiInput || '📁' };
-  } else {
-    const ytId = extractYouTubeId(urlInput);
-    if (!ytId) { showToast('❌ Geçersiz YouTube linki'); return; }
-    videoObj = { id: ytId, type: 'youtube', title: titleInput, emoji: emojiInput || '' };
-  }
+  const coverId = coverVal ? extractDriveId(coverVal) : null;
 
-  if (state.videos.find(v => v.id === videoObj.id)) {
-    showToast('⚠️ Bu video zaten ekli');
-    return;
-  }
+  if (state.videos.find(v => v.id === id)) { showToast('⚠️ Bu video zaten ekli'); return; }
 
-  state.videos.push(videoObj);
-  save();
-  renderPanel();
-  renderHome();
-
-  document.getElementById('input-url').value = '';
-  document.getElementById('input-title').value = '';
-  document.getElementById('input-emoji').value = '';
+  state.videos.push({ id, title: titleVal, category: catVal, emoji: emojiVal || '', coverId: coverId || '' });
+  save(); renderPanel(); renderHome();
+  ['input-url','input-title','input-cover','input-emoji'].forEach(x => document.getElementById(x).value = '');
+  document.getElementById('input-cat-select').value = '';
   showToast('✅ Video eklendi!');
 }
 
 function deleteVideo(i) {
   if (!confirm(`"${state.videos[i].title}" silinsin mi?`)) return;
   state.videos.splice(i, 1);
-  save();
-  renderPanel();
-  renderHome();
+  save(); renderPanel(); renderHome();
   showToast('🗑️ Video silindi');
 }
 
 function changePin() {
-  const newPin = document.getElementById('new-pin').value.trim();
-  if (!/^\d{4}$/.test(newPin)) {
-    showToast('⚠️ PIN 4 haneli sayı olmalı');
-    return;
-  }
-  state.pin = newPin;
-  save();
+  const np = document.getElementById('new-pin').value.trim();
+  if (!/^\d{4}$/.test(np)) { showToast('⚠️ PIN 4 haneli sayı olmalı'); return; }
+  state.pin = np; save();
   document.getElementById('new-pin').value = '';
   showToast('🔑 PIN güncellendi!');
 }
 
-function closePanel() {
-  showScreen('home');
-}
+function closePanel() { showScreen('home'); }
 
-// ═══════════════════════ SCREEN MANAGER ═══════════════════════
+// ══ SCREEN MANAGER ══
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
 
-// ═══════════════════════ TOAST ═══════════════════════
+// ══ TOAST ══
 let toastTimer;
 function showToast(msg) {
   const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
+  t.textContent = msg; t.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-// ═══════════════════════ UTILS ═══════════════════════
+// ══ UTILS ══
 function escHtml(str) {
   return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// ═══════════════════════ BACK BUTTON (Android) ═══════════════════════
-window.addEventListener('popstate', (e) => {
+// ══ ANDROID BACK ══
+window.addEventListener('popstate', () => {
   const active = document.querySelector('.screen.active');
-  if (active && active.id !== 'home') {
-    if (active.id === 'player') closePlayer();
-    else if (active.id === 'parent-panel') closePanel();
-    else if (active.id === 'pin-screen') showScreen('home');
-  } else {
-    history.pushState(null, '', '');
-  }
+  if (!active || active.id === 'home') { history.pushState(null,'',''); return; }
+  if (active.id === 'player') closePlayer();
+  else if (active.id === 'parent-panel') closePanel();
+  else if (active.id === 'pin-screen') showScreen('home');
 });
+history.pushState(null,'','');
 
-history.pushState(null, '', '');
-
-// ═══════════════════════ FIRST RUN CHECK ═══════════════════════
-function checkFirstRun() {
-  const savedPin = localStorage.getItem('minitv_pin');
-  if (!savedPin) {
-    // First run: show setup note via empty state, PIN is default 1234
-    state.pin = DEFAULT_PIN;
-  }
-}
-
-// ═══════════════════════ INIT ═══════════════════════
+// ══ INIT ══
 load();
-checkFirstRun();
+renderCatTabs();
 renderHome();
 </script>
 </body>
