@@ -870,5 +870,44 @@ renderBanner();
 renderCatTabs();
 renderHome();
 </script>
+<div id="videoList"></div>
+<script>
+async function loadVideos() {
+  const el = document.getElementById("videoList");
+  el.innerHTML = "Yükleniyor...";
+
+  try {
+    // Cache kırmak için ts ekliyoruz
+    const res = await fetch("./videos.json?ts=" + Date.now());
+    if (!res.ok) throw new Error("videos.json okunamadı: " + res.status);
+
+    const videos = await res.json();
+    if (!Array.isArray(videos) || videos.length === 0) {
+      el.innerHTML = "Henüz video yok.";
+      return;
+    }
+
+    el.innerHTML = videos.map(v => `
+      <div style="margin:16px 0; padding:12px; border:1px solid #ddd; border-radius:12px;">
+        <div style="font-weight:700; margin-bottom:8px;">${escapeHtml(v.title || "Video")}</div>
+        <iframe
+          src="${escapeAttr(v.url)}"
+          style="width:100%; aspect-ratio:16/9; border:0; border-radius:12px;"
+          allow="autoplay; fullscreen"
+          allowfullscreen
+        ></iframe>
+        ${v.note ? `<div style="margin-top:8px; opacity:.8;">${escapeHtml(v.note)}</div>` : ""}
+      </div>
+    `).join("");
+  } catch (err) {
+    el.innerHTML = "Hata: " + err.message;
+  }
+}
+
+function escapeHtml(s){return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+function escapeAttr(s){return escapeHtml(s).replace(/`/g, "");}
+
+loadVideos();
+</script>
 </body>
 </html>
